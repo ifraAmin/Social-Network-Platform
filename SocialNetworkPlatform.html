@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #0056b3;
+            text-transform: uppercase;
+        }
+
+        .profile, .post, .notification-settings, .multimedia {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        .comments {
+            margin-top: 10px;
+        }
+
+        .comment {
+            border-top: 1px solid #ccc;
+            padding-top: 5px;
+        }
+
+        .actions {
+            margin-top: 10px;
+        }
+
+        .like, .friend-request {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .input-group button {
+            padding: 8px 15px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .notification-settings label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .notification-settings input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .multimedia img {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Network Platform</h1>
+    
+    <div class="input-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter your name">
+    </div>
+    <div class="input-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email">
+    </div>
+    <div class="input-group">
+        <button id="submit">Submit</button>
+    </div>
+    
+    <div class="profile" id="profile">
+        <h2>User Profile</h2>
+        <p>Name: <span id="profile-name"></span></p>
+        <p>Email: <span id="profile-email"></span></p>
+        <div class="actions">
+            <span class="friend-request">Send Friend Request</span>
+        </div>
+    </div>
+
+    <div class="post">
+        <p><strong>John Doe</strong> This is a sample post!</p>
+        <div class="actions">
+            <span class="like">Like</span> | <span class="comment-button">Comment</span>
+        </div>
+        <div class="comments">
+            <div class="comment">
+                <p><strong>Jane Doe:</strong> Great post!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="notification-settings">
+        <h2>Notification Settings</h2>
+        <label>
+            <input type="checkbox" id="notifications-enabled"> Enable Notifications
+        </label>
+    </div>
+
+    <!-- Multimedia Content Sharing -->
+    <div class="multimedia">
+        <h2>Share Multimedia Content</h2>
+        <input type="file" id="file-input" />
+        <div id="file-display"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const submitButton = document.getElementById('submit');
+            submitButton.addEventListener('click', () => {
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+
+                if (name && email) {
+                    document.getElementById('profile-name').textContent = name;
+                    document.getElementById('profile-email').textContent = email;
+                    alert('Profile updated!');
+                } else {
+                    alert('Please enter both name and email.');
+                }
+            });
+
+            const likeButtons = document.querySelectorAll('.like');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    alert('You liked this post!');
+                });
+            });
+
+            const commentButtons = document.querySelectorAll('.comment-button');
+            commentButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const comment = prompt('Enter your comment:');
+                    if (comment) {
+                        const commentElement = document.createElement('div');
+                        commentElement.classList.add('comment');
+                        commentElement.innerHTML = `<p><strong>You:</strong> ${comment}</p>`;
+                        button.parentElement.nextElementSibling.appendChild(commentElement);
+                    }
+                });
+            });
+
+            const friendRequestButtons = document.querySelectorAll('.friend-request');
+            friendRequestButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    alert('Friend request sent!');
+                });
+            });
+
+            // Notification Settings
+            const notificationsCheckbox = document.getElementById('notifications-enabled');
+            notificationsCheckbox.addEventListener('change', () => {
+                if (notificationsCheckbox.checked) {
+                    if (Notification.permission === 'granted') {
+                        new Notification('Notifications Enabled', { body: 'You will receive notifications.' });
+                    } else if (Notification.permission !== 'denied') {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                new Notification('Notifications Enabled', { body: 'You will receive notifications.' });
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Multimedia Content Sharing
+            const fileInput = document.getElementById('file-input');
+            const fileDisplay = document.getElementById('file-display');
+            fileInput.addEventListener('change', (event) => {
+                const files = event.target.files;
+                fileDisplay.innerHTML = '';
+
+                Array.from(files).forEach(file => {
+                    const fileReader = new FileReader();
+                    fileReader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        fileDisplay.appendChild(img);
+                    };
+                    fileReader.readAsDataURL(file);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
